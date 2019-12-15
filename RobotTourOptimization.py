@@ -19,8 +19,15 @@ def calcul_circuit(list_of_points, cycle):
         list_of_points[cycle[i]]
       
     """
+    distance = 0
+    i = 0
+    for i in range (len(cycle)):
+        if i == (len(cycle) - 1): #si i est a la derniere case de cycle
+            distance += calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[0]])
+        else :
+            distance += calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[i + 1]])
 
-    return 0
+    return distance
 
 
 def nearest_neighbor_algorithm(first_point, list_of_points):
