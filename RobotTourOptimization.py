@@ -8,6 +8,48 @@ def calcul_distance(first_point_value, second_point_value):
     res = math.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2)
     return res
 
+def Fusion(tab1,tab2):
+    n1=len(tab1) 
+    n2= len (tab2)
+    n= n1+n2
+    j=1
+    k=1
+    tab=[0]*(n)
+    
+    for i in range(n):
+        if((j<=n1) and ((k>n2) or (tab1[j-1]<= tab2[k-1]))):
+          tab[i] = tab1[j-1]
+          j=j+1
+        else:
+            tab[i]=tab2[k-1]
+            k=k+1
+    return tab
+
+def MergeSort(tab):
+    'declaration'
+    longueurtab = len(tab)
+    n1 = round(longueurtab/2)
+    n2 = longueurtab-n1
+    
+    if (longueurtab==1):
+        return tab
+    else:
+        tab1=[0](n1)
+        tab2=[0](n2)
+        
+        for i in range(n1):
+            tab1[i] =tab[i]
+            
+        for j in range(n2):
+            tab2[j]=tab[n1+j]
+            
+        tab1 = MergeSort(tab1)
+        tab2 = MergeSort(tab2)
+        
+        tab = Fusion(tab1, tab2)
+        
+    return tab
+
 
 def calcul_circuit(list_of_points, cycle):
     """
@@ -36,9 +78,34 @@ def nearest_neighbor_algorithm(first_point, list_of_points):
     first_point: label of the first point
     list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
     return a list of point to visit, starting from first_point.
+
+    prendre un point initial p0 de la liste
+    p = p0
+    i = 0
+    tant qu'il y a encore des points non-visités
+    i = i + 1
+    on prend 
     """
 
-    return list(list_of_points.keys())
+    p0 = list_of_points[first_point]
+    unvisited = list_of_points
+    del unvisited[p0]
+    visited = list()
+    visited.append(p0[0])
+    p = p0
+    while len(unvisited) != 0 :
+        res = [len(unvisited)]
+        i = 0
+        for i in range(len(unvisited)) :
+            res[i] = (unvisited[i][0],  calcul_distance(p[1], unvisited[i][1]))
+        res = MergeSort(res)
+        p = res[0]
+        visited.append(p)
+        del unvisited[p]
+    return list(visited)
+
+
+
 
 
 def great_algorithm(first_point, list_of_points):
