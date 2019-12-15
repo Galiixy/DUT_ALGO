@@ -11,7 +11,7 @@ Maintenant, tu peux modifier à ta guise le fichier depuis Visual Code
   3) git add <nomfichier.extension>
   4) faire ça pour tous les fichiers à ajouter 
   5) git commit -m "message de modification"
-  6) git push origin branche
+  6) git push origin master
   
  3ème étape : Actualiser ton dossier pour prendres les modifications du dépôt
   1) git pull
