@@ -17,7 +17,7 @@ def Fusion(tab1,tab2):
     tab=[0]*(n)
     
     for i in range(n):
-        if((j<=n1) and ((k>n2) or (tab1[j-1]<= tab2[k-1]))):
+        if((j<=n1) and ((k>n2) or (tab1[j-1][1]<= tab2[k-1][1]))):
           tab[i] = tab1[j-1]
           j=j+1
         else:
@@ -34,9 +34,11 @@ def MergeSort(tab):
     if (longueurtab==1):
         return tab
     else:
+        'declarations'
         tab1=[0](n1)
         tab2=[0](n2)
-        
+
+        'traitement'
         for i in range(n1):
             tab1[i] =tab[i]
             
@@ -57,19 +59,15 @@ def calcul_circuit(list_of_points, cycle):
         Cycle: Order of the point in the alogorithm (name of the points)
         list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
         return a float, a circuit length
-      Boucle for sur cycle
-        list_of_points[cycle[i]]
-      
     """
     distance = 0
     i = 0
     for i in range (len(cycle)):
-        if i == (len(cycle) - 1): #si i est a la derniere case de cycle
+        if i == (len(cycle) - 1): """si i est a la derniere case de cycle"""
             distance += calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[0]])
         else :
             distance += calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[i + 1]])
-
-    return distance
+        return distance
 
 
 def nearest_neighbor_algorithm(first_point, list_of_points):
