@@ -1,7 +1,7 @@
 1ère étape : récupérer le dépôt GIT
   1) Ouvrir GIT BASH 
   2) Aller dans le dossier que tu souhaites avec cd
-  3) git clone https://github.com/Galiixy/projet_algo
+  3) git clone https://github.com/Galiixy/projet_algo.git
   
 Maintenant, tu peux modifier à ta guise le fichier depuis Visual Code
 
