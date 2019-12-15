@@ -12,7 +12,7 @@ def calcul_distance(first_point_value, second_point_value):
 def calcul_circuit(list_of_points, cycle):
     """
         Circuit length calculation
-        first_point: label of the first point
+        Cycle: Order of the point in the alogorithm (name of the points)
         list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
         return a float, a circuit length
     """
