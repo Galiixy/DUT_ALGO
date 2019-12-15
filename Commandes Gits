@@ -7,10 +7,11 @@ Maintenant, tu peux modifier à ta guise le fichier depuis Visual Code
 
 2ème étape : Modifier un fichier et ajout de fichier sur le dépôt 
   1) Modification 
-  2) git add <nomfichier.extension>
-  3) faire ça pour tous les fichiers à ajouter 
-  4) git commit -m "message de modification"
-  5) git push origin branche
+  2) Ajouter le fichier dans le même dossier que le clone
+  3) git add <nomfichier.extension>
+  4) faire ça pour tous les fichiers à ajouter 
+  5) git commit -m "message de modification"
+  6) git push origin master
   
  3ème étape : Actualiser ton dossier pour prendres les modifications du dépôt
   1) git pull
