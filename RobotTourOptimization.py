@@ -15,6 +15,9 @@ def calcul_circuit(list_of_points, cycle):
         Cycle: Order of the point in the alogorithm (name of the points)
         list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
         return a float, a circuit length
+      Boucle for sur cycle
+        list_of_points[cycle[i]]
+      
     """
 
     return 0
