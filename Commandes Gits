@@ -1,0 +1,17 @@
+1ère étape : récupérer le dépôt GIT
+  1) Ouvrir GIT BASH 
+  2) Aller dans le dossier que tu souhaites avec cd
+  3) git clone 
+  
+Maintenant, tu peux modifier à ta guise le fichier depuis Visual Code
+
+2ème étape : Modifier un fichier et ajout de fichier sur le dépôt 
+  1) Modification 
+  2) git add <nomfichier.extension>
+  3) faire ça pour tous les fichiers à ajouter 
+  4) git commit -m "message de modification"
+  5) git push origin branche
+  
+ 3ème étape : Actualiser ton dossier pour prendres les modifications du dépôt
+  1) git pull
+  
