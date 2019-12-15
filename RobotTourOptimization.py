@@ -3,14 +3,10 @@ import math  # https://docs.python.org/3/library/math.html
 
 
 def calcul_distance(first_point_value, second_point_value):
-    """
-        Distance between two points calculation
-        first_point_value : tuple (x, y) of a point
-        second_point_value : tuple (x, y) of a point
-        return a float, the distance between those two point
-    """
-
-    return 0
+    p0 = first_point_value
+    p1 = second_point_value
+    res = math.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2)
+    return res
 
 
 def calcul_circuit(list_of_points, cycle):
