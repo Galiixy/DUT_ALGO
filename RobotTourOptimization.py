@@ -8,6 +8,8 @@ def calcul_distance(first_point_value, second_point_value):
     res = math.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2)
     return res
 
+#fonctions utiles ----------------
+ #tri naïf
 def Fusion(tab1,tab2):
     n1=len(tab1) 
     n2= len (tab2)
@@ -52,11 +54,36 @@ def MergeSort(tab):
         
     return tab
 
+ #tri efficace (Quick sort)
+  def partition(tab,cpt_debut,cpt_fin): 
+    index = ( cpt_debut-1 )  
+    pivot = tab[cpt_fin] 
+
+
+    for i in range(cpt_fin , cpt_debut):
+        if   tab[i] <= pivot:       
+            cpt = cpt+1 
+            Value = tab[i]
+            tab[i]= tab[cpt]
+            tab[cpt]=Value
+
+    Value= tab[cpt+1]
+    tab[cpt+1]=tab[cpt_fin]
+    tab[cpt_fin] = tab[cpt+1] 
+    return ( cpt+1 ) 
+  
+# Function to do Quick sort 
+def quickSort(tab,cpt_debut,cpt_fin): 
+    if cpt_debut < cpt_fin: 
+
+        v_pivot = pivot(tab,cpt_debut,cpt_fin)
+        quickSort(tab,cpt_debut,cpt_fin-1) 
+        quickSort(tab,cpt_debut+1,cpt_fin)
 
 def calcul_circuit(list_of_points, cycle):
     """
         Circuit length calculation
-        Cycle: Order of the point in the alogorithm (name of the points)
+        Cycle: Order of the point in   the alogorithm (name of the points)
         list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
         return a float, a circuit length
     """
