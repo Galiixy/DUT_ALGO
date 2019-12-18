@@ -1,6 +1,6 @@
 # Your code should work with python 3.6 or less. Function/Method from python 3.8 are prohibited !!!
 import math  # https://docs.python.org/3/library/math.html
-
+import copy
 
 def calcul_distance(first_point_value, second_point_value):
     p0 = first_point_value
@@ -8,18 +8,18 @@ def calcul_distance(first_point_value, second_point_value):
     res = math.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2)
     return res
 
-#fonctions utiles ----------------
+#fonctions utiles --------------------------------------------------------
  #tri naïf
 def Fusion(tab1,tab2):
     n1=len(tab1) 
-    n2= len (tab2)
+    n2= len(tab2)
     n= n1+n2
     j=1
     k=1
     tab=[0]*(n)
     
     for i in range(n):
-        if((j<=n1) and ((k>n2) or (tab1[j-1][1]<= tab2[k-1][1]))):
+        if((j<=n1) and ((k>n2) or (tab1[j-1][1]<=tab2[k-1][1]))):
           tab[i] = tab1[j-1]
           j=j+1
         else:
@@ -37,8 +37,8 @@ def MergeSort(tab):
         return tab
     else:
         'declarations'
-        tab1=[0](n1)
-        tab2=[0](n2)
+        tab1=[0]*(n1)
+        tab2=[0]*(n2)
 
         'traitement'
         for i in range(n1):
@@ -51,49 +51,46 @@ def MergeSort(tab):
         tab2 = MergeSort(tab2)
         
         tab = Fusion(tab1, tab2)
-        
     return tab
 
  #tri efficace (Quick sort)
-  def partition(tab,cpt_debut,cpt_fin): 
-    index = ( cpt_debut-1 )  
+def pivot(tab,cpt_debut,cpt_fin): 
+    index = cpt_debut-1
     pivot = tab[cpt_fin] 
-
-
+    value=0
     for i in range(cpt_fin , cpt_debut):
         if   tab[i] <= pivot:       
-            cpt = cpt+1 
-            Value = tab[i]
-            tab[i]= tab[cpt]
-            tab[cpt]=Value
-
-    Value= tab[cpt+1]
-    tab[cpt+1]=tab[cpt_fin]
-    tab[cpt_fin] = tab[cpt+1] 
-    return ( cpt+1 ) 
+            index = index+1 
+            value = tab[i]
+            tab[i]= tab[index]
+            tab[index]=value
+    value= tab[index+1]
+    tab[index+1]=tab[cpt_fin]
+    tab[cpt_fin] = tab[index+1] 
+    return (index+1) 
   
 # Function to do Quick sort 
 def quickSort(tab,cpt_debut,cpt_fin): 
-    if cpt_debut < cpt_fin: 
-
+    if (cpt_debut < cpt_fin): 
         v_pivot = pivot(tab,cpt_debut,cpt_fin)
-        quickSort(tab,cpt_debut,cpt_fin-1) 
-        quickSort(tab,cpt_debut+1,cpt_fin)
+        quickSort(tab,cpt_debut,v_pivot-1) 
+        quickSort(tab,v_pivot+1+1,cpt_fin)
 
 def calcul_circuit(list_of_points, cycle):
     """
         Circuit length calculation
-        Cycle: Order of the point in   the alogorithm (name of the points)
+        Cycle: Order of the point in the alogorithm (name of the points)
         list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
         return a float, a circuit length
     """
     distance = 0
     i = 0
     for i in range (len(cycle)):
-        if i == (len(cycle) - 1): """si i est a la derniere case de cycle"""
-            distance += calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[0]])
-        else :
-            distance += calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[i + 1]])
+        "si i est a la derniere case de cycle"
+        if (i == (len(cycle) - 1)):
+            distance +=calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[0]])
+        else:
+            distance +=calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[i + 1]])
         return distance
 
 
@@ -113,20 +110,24 @@ def nearest_neighbor_algorithm(first_point, list_of_points):
     """
 
     p0 = list_of_points[first_point]
-    unvisited = list_of_points
-    del unvisited[p0]
+    unvisited = copy.copy(list_of_points)
+    del unvisited[first_point]
     visited = list()
-    visited.append(p0[0])
+    visited.append(first_point)
     p = p0
     while len(unvisited) != 0 :
-        res = [len(unvisited)]
+        res = [0]*(len(unvisited))
         i = 0
-        for i in range(len(unvisited)) :
-            res[i] = (unvisited[i][0],  calcul_distance(p[1], unvisited[i][1]))
+        for point in unvisited:
+            "on recupere la liste des distance "
+            "res[i] = (point en question, distance par rapport a p)"
+            res[i] = (point,  calcul_distance(p, unvisited[point]),unvisited[point])
+            i=i+1
+        "tri sur le tuple les distance"
         res = MergeSort(res)
         p = res[0]
-        visited.append(p)
-        del unvisited[p]
+        visited.append(p[0])
+        del unvisited[p[0]]
     return list(visited)
 
 
@@ -206,7 +207,6 @@ def test_return_sized():
 
 def test_small_nearest_neighbor():
     list_of_points = get_small_list_of_points()
-
     first_point = 0
     result = nearest_neighbor_algorithm(first_point, list_of_points)
     assert len(result) == 10
@@ -249,3 +249,5 @@ def test_small_optimal_algorithm():
 def test_big_optimal_algorithm():
     """I will test with a lot of points"""
     pass
+
+test_small_nearest_neighbor()
