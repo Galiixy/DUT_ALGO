@@ -1,6 +1,9 @@
 # Your code should work with python 3.6 or less. Function/Method from python 3.8 are prohibited !!!
 import math  # https://docs.python.org/3/library/math.html
 import copy
+import numpy as np
+import itertools
+
 
 def calcul_distance(first_point_value, second_point_value):
     p0 = first_point_value
@@ -8,8 +11,25 @@ def calcul_distance(first_point_value, second_point_value):
     res = math.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2)
     return res
 
-#fonctions utiles --------------------------------------------------------
- #tri naïf
+
+def calcul_circuit(list_of_points, cycle):
+    """
+        Circuit length calculation
+        Cycle: Order of the point in the alogorithm (name of the points)
+        list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
+        return a float, a circuit length
+    """
+    distance = 0
+    i = 0
+    for i in range (len(cycle)):
+        "si i est a la derniere case de cycle"
+        if (i == (len(cycle) - 1)):
+            distance +=calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[0]])
+        else:
+            distance +=calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[i + 1]])
+    return distance
+
+
 def Fusion(tab1,tab2):
     n1=len(tab1) 
     n2= len(tab2)
@@ -53,62 +73,9 @@ def MergeSort(tab):
         tab = Fusion(tab1, tab2)
     return tab
 
- #tri efficace (Quick sort)
-def pivot(tab,cpt_debut,cpt_fin): 
-    index = cpt_debut-1
-    pivot = tab[cpt_fin] 
-    value=0
-    for i in range(cpt_fin , cpt_debut):
-        if   tab[i] <= pivot:       
-            index = index+1 
-            value = tab[i]
-            tab[i]= tab[index]
-            tab[index]=value
-    value= tab[index+1]
-    tab[index+1]=tab[cpt_fin]
-    tab[cpt_fin] = tab[index+1] 
-    return (index+1) 
-  
-# Function to do Quick sort 
-def quickSort(tab,cpt_debut,cpt_fin): 
-    if (cpt_debut < cpt_fin): 
-        v_pivot = pivot(tab,cpt_debut,cpt_fin)
-        quickSort(tab,cpt_debut,v_pivot-1) 
-        quickSort(tab,v_pivot+1+1,cpt_fin)
-
-def calcul_circuit(list_of_points, cycle):
-    """
-        Circuit length calculation
-        Cycle: Order of the point in the alogorithm (name of the points)
-        list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
-        return a float, a circuit length
-    """
-    distance = 0
-    i = 0
-    for i in range (len(cycle)):
-        "si i est a la derniere case de cycle"
-        if (i == (len(cycle) - 1)):
-            distance +=calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[0]])
-        else:
-            distance +=calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[i + 1]])
-        return distance
-
 
 def nearest_neighbor_algorithm(first_point, list_of_points):
-    """
-    Implement the nearest_neighbor algorithm.
-    first_point: label of the first point
-    list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
-    return a list of point to visit, starting from first_point.
-
-    prendre un point initial p0 de la liste
-    p = p0
-    i = 0
-    tant qu'il y a encore des points non-visités
-    i = i + 1
-    on prend 
-    """
-
+  
     p0 = list_of_points[first_point]
     unvisited = copy.copy(list_of_points)
     del unvisited[first_point]
@@ -131,7 +98,29 @@ def nearest_neighbor_algorithm(first_point, list_of_points):
     return list(visited)
 
 
-
+def get_MatriceDistance(first_point, list_of_points, matrice_distance, longueur):
+    #declaration
+    matrice_point=[0]*(longueur) #matrice des coordonnees des points, cela sert a la suppression
+    
+    pointReference=list_of_points[first_point]
+    points = copy.copy(list_of_points)
+   
+    del points[first_point] #on supprime le point de reference du tableau de points
+    matrice_distance[0][0] = first_point
+    
+    #Remplissage de la matrice des distances 
+    for cpt_ligne in range(longueur): # print(matrice_point)
+        matrice_point[0]= list_of_points[cpt_ligne]
+        matrice_distance[cpt_ligne][0] = cpt_ligne
+        cpt_colonne = 1
+        for index_point in points:
+            matrice_distance[cpt_ligne][cpt_colonne] = (calcul_distance(pointReference, points[index_point]))
+            matrice_point[cpt_colonne]= points[index_point]
+            cpt_colonne = cpt_colonne + 1
+        points[longueur+cpt_ligne]=pointReference
+        pointReference=matrice_point[1]
+        del points[cpt_ligne+1]
+    return matrice_distance
 
 
 def great_algorithm(first_point, list_of_points):
@@ -141,19 +130,36 @@ def great_algorithm(first_point, list_of_points):
         list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
         return a list of point to visit, starting from first_point.
     """
+      #declaration
+    longueur=len(list_of_points)
+    matrice_distance = np.zeros((longueur,longueur))
+    
+    matrice_distance = get_MatriceDistance(first_point, list_of_points, matrice_distance, longueur)
 
     return list(list_of_points.keys())
 
 
 def optimal_algorithm(first_point, list_of_points):
-    """
-        Implement an optimal algorithm. This solution is the best, but it is slow
-        first_point: label of the first point
-        list_of_points: dict of all the point, the key is the label, the value is a tuple (x, y)
-        return a list of point to visit, starting from first_point.
-    """
+    distance_circuit = 10000
+    
+    "on copie la liste de points"
+    circuit= copy.copy(list_of_points)
+    
+    "On retire le premier point de la permutation"
+    del circuit[0]
 
-    return list(list_of_points.keys())
+    "calcul de toutes les possibilites de circuit "
+    permutations=list(itertools.permutations(circuit)) 
+
+    for circuit_permute in permutations:
+        "on remet le premier point au circuit "
+        circuit_permute=(first_point,) + circuit_permute 
+        
+        if(calcul_circuit(list_of_points,circuit_permute)<=distance_circuit):
+            distance_circuit =calcul_circuit(list_of_points,circuit_permute)
+            circuitOptimal=circuit_permute
+
+    return list(circuitOptimal)
 
 
 def get_small_list_of_points():
@@ -168,6 +174,19 @@ def get_small_list_of_points():
         7: (4, 4),
         8: (7, 0),
         9: (6, 6)
+    }
+    return list_of_points
+
+
+def get_tricky_points():
+    list_of_points = {
+        0: (0, 0),
+        1: (0, 1),
+        2: (0, 3),
+        3: (0, 11),
+        4: (0, -21),
+        5: (0, -5),
+        6: (0, -1),
     }
     return list_of_points
 
@@ -207,6 +226,7 @@ def test_return_sized():
 
 def test_small_nearest_neighbor():
     list_of_points = get_small_list_of_points()
+
     first_point = 0
     result = nearest_neighbor_algorithm(first_point, list_of_points)
     assert len(result) == 10
@@ -242,12 +262,43 @@ def test_small_optimal_algorithm():
     result = optimal_algorithm(first_point, list_of_points)
     assert len(result) == 10
     assert result[0] == first_point
-
-    """I will add some tests here"""
+    circuit_cost = calcul_circuit(list_of_points, result)
+    assert round(circuit_cost) <= 27
+    assert round(circuit_cost, 2) == 24.75
+    assert result == [0, 2, 3, 1, 7, 5, 9, 6, 8, 4]
 
 
 def test_big_optimal_algorithm():
     """I will test with a lot of points"""
     pass
 
-test_small_nearest_neighbor()
+
+def test_tricky_nearest_neighbor():
+    list_of_points = get_tricky_points()
+
+    first_point = 0
+    result = nearest_neighbor_algorithm(first_point, list_of_points)
+    assert len(result) == 7
+    assert result[0] == first_point
+    assert round(calcul_circuit(list_of_points, result)) <= 80
+
+
+def test_tricky_better_algorithm():
+    list_of_points = get_tricky_points()
+
+    first_point = 0
+    result = great_algorithm(first_point, list_of_points)
+    assert len(result) == 7
+    assert result[0] == first_point
+    assert round(calcul_circuit(list_of_points, result)) < 80
+
+
+def test_tricky_optimal_algorithm():
+    list_of_points = get_tricky_points()
+
+    first_point = 0
+    result = optimal_algorithm(first_point, list_of_points)
+    assert len(result) == 7
+    assert result[0] == first_point
+    assert round(calcul_circuit(list_of_points, result)) == 64
+great_algorithm(0,get_small_list_of_points())
