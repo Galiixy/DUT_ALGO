@@ -25,7 +25,7 @@ def calcul_circuit(list_of_points, cycle):
     return distance
 
 
-def Fusion(tab1, tab2):
+def fusion(tab1, tab2):
     n1 = len(tab1)
     n2 = len(tab2)
     n = n1+n2
@@ -42,7 +42,7 @@ def Fusion(tab1, tab2):
     return tab
 
 
-def MergeSort(tab):
+def merge_sort(tab):
     longueurtab = len(tab)
     n1 = round(longueurtab/2)
     n2 = longueurtab-n1
@@ -55,9 +55,9 @@ def MergeSort(tab):
             tab1[i] = tab[i]
         for j in range(n2):
             tab2[j] = tab[n1+j]
-        tab1 = MergeSort(tab1)
-        tab2 = MergeSort(tab2)
-        tab = Fusion(tab1, tab2)
+        tab1 = merge_sort(tab1)
+        tab2 = merge_sort(tab2)
+        tab = fusion(tab1, tab2)
     return tab
 
 
@@ -84,7 +84,7 @@ def nearest_neighbor_algorithm(first_point, list_of_points):
 
 def get_Matrice(first_point, list_of_points, matrice_dist, long):
     matrice_point = [0]*(long)
-    pointReference = list_of_points[first_point]
+    point_ref = list_of_points[first_point]
     points = copy.copy(list_of_points)
     del points[first_point]
     matrice_dist[0][0] = first_point
@@ -93,12 +93,12 @@ def get_Matrice(first_point, list_of_points, matrice_dist, long):
         matrice_dist[cpt_ligne][0] = cpt_ligne
         cpt_colonne = 1
         for index_point in points:
-            distance = calcul_distance(pointReference, points[index_point])
+            distance = calcul_distance(point_ref, points[index_point])
             matrice_dist[cpt_ligne][cpt_colonne] = distance
             matrice_point[cpt_colonne] = points[index_point]
             cpt_colonne = cpt_colonne + 1
-        points[long+cpt_ligne] = pointReference
-        pointReference = matrice_point[1]
+        points[long+cpt_ligne] = point_ref
+        point_ref = matrice_point[1]
         del points[cpt_ligne+1]
     return matrice_dist
 
