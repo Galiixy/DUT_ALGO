@@ -1,2 +1,8 @@
-# projet_algo
-faire attention à la norme PEP_8
+# projet Robot
+
+## Installation 
+
+## Code Style
+
+## Contact
+If you need more informations you can contact us : Gaelle FERREIRA : gaelle.ferreira.77@gmail.com 
