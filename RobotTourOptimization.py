@@ -1,5 +1,4 @@
-# Your code should work with python 3.6 or less. Function/Method from python 3.8 are prohibited !!!
-import math  # https://docs.python.org/3/library/math.html
+import math
 import copy
 import numpy as np
 import itertools
@@ -16,10 +15,13 @@ def calcul_circuit(list_of_points, cycle):
     distance = 0
     i = 0
     for i in range(len(cycle)):
+        coordP1 = list_of_points[cycle[i]]
         if(i == (len(cycle)-1)):
-            distance += calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[0]])
+            coordP2 = list_of_points[cycle[0]]
+            distance += calcul_distance(coordP1, coordP2)
         else:
-            distance += calcul_distance(list_of_points[cycle[i]], list_of_points[cycle[i+1]])
+            coordP2 = list_of_points[cycle[i+1]]
+            distance += calcul_distance(coordP1, coordP2)
     return distance
 
 
@@ -70,7 +72,8 @@ def nearest_neighbor_algorithm(first_point, list_of_points):
         res = [0]*(len(unvisited))
         i = 0
         for point in unvisited:
-            res[i] = (point, calcul_distance(p, unvisited[point]), unvisited[point])
+            distance = calcul_distance(p, unvisited[point])
+            res[i] = (point, distance, unvisited[point])
             i = i+1
         res = MergeSort(res)
         p = res[0]
@@ -79,52 +82,54 @@ def nearest_neighbor_algorithm(first_point, list_of_points):
     return list(visited)
 
 
-def get_MatriceDistance(first_point, list_of_points, matrice_distance, longueur):
-    matrice_point = [0]*(longueur)
+def get_Matrice(first_point, list_of_points, matrice_dist, long):
+    matrice_point = [0]*(long)
     pointReference = list_of_points[first_point]
     points = copy.copy(list_of_points)
     del points[first_point]
-    matrice_distance[0][0] = first_point
-    for cpt_ligne in range(longueur):
+    matrice_dist[0][0] = first_point
+    for cpt_ligne in range(long):
         matrice_point[0] = list_of_points[cpt_ligne]
-        matrice_distance[cpt_ligne][0] = cpt_ligne
+        matrice_dist[cpt_ligne][0] = cpt_ligne
         cpt_colonne = 1
         for index_point in points:
-            matrice_distance[cpt_ligne][cpt_colonne] = (calcul_distance(pointReference, points[index_point]))
+            distance = calcul_distance(pointReference, points[index_point])
+            matrice_dist[cpt_ligne][cpt_colonne] = distance
             matrice_point[cpt_colonne] = points[index_point]
             cpt_colonne = cpt_colonne + 1
-        points[longueur+cpt_ligne] = pointReference
+        points[long+cpt_ligne] = pointReference
         pointReference = matrice_point[1]
         del points[cpt_ligne+1]
-    return matrice_distance
+    return matrice_dist
 
 
 def great_algorithm(first_point, list_of_points):
-    longueur = len(list_of_points)
-    matrice_distance = np.zeros((longueur, longueur))
+    long = len(list_of_points)
+    matrice_dist = np.zeros((long, long))
     distance_min = 100000
     distance_max = 0
     points = list()
-    matrice_distance = get_MatriceDistance(first_point, list_of_points, matrice_distance, longueur)
-    for cpt_colonne in range(1, longueur):
-        if(matrice_distance[first_point][cpt_colonne] > distance_max):
-            cpt_point = first_point + cpt_colonne
-            if(cpt_point >= longueur):
-                    cpt_point = cpt_point-longueur
-            distance_max = matrice_distance[first_point][cpt_colonne]
+    matrice_dist = get_Matrice(first_point, list_of_points, matrice_dist, long)
+    for cpt_col in range(1, long):
+        if(matrice_dist[first_point][cpt_col] > distance_max):
+            cpt_point = first_point + cpt_col
+            if(cpt_point >= long):
+                    cpt_point = cpt_point-long
+            distance_max = matrice_dist[first_point][cpt_col]
     points.append(first_point)
     points.append(cpt_point)
-    while(len(points) != longueur):
+    while(len(points) != long):
         distance_min = 100000
         index_min = 0
-        for cpt_colonne in range(1, longueur):
-            index_min = cpt_point + cpt_colonne
-            if(index_min >= longueur):
-                    index_min = index_min - longueur
-            if(len(points) == (longueur-1) and index_min not in points):
+        for cpt_col in range(1, long):
+            distance = matrice_dist[cpt_point][cpt_col]
+            index_min = cpt_point + cpt_col
+            if(index_min >= long):
+                    index_min = index_min - long
+            if(len(points) == (long-1) and index_min not in points):
                 index_point = index_min
-            if(matrice_distance[cpt_point][cpt_colonne] <= distance_min and index_min not in points):
-                distance_min = matrice_distance[cpt_point][cpt_colonne]
+            if(distance <= distance_min and index_min not in points):
+                distance_min = distance
                 index_point = index_min
         points.append(index_point)
         cpt_point = index_point
@@ -134,7 +139,7 @@ def great_algorithm(first_point, list_of_points):
 def optimal_algorithm(first_point, list_of_points):
     distance_circuit = 10000
     circuit = copy.copy(list_of_points)
-    del circuit[0]
+    del circuit[first_point]
     permutations = list(itertools.permutations(circuit))
     for circuit_permute in permutations:
         circuit_permute = (first_point,) + circuit_permute
@@ -191,7 +196,6 @@ def test_calcul_min_circuit():
 
 def test_calcul_circuit():
     list_of_points = get_small_list_of_points()
-
     cycle = list(list_of_points.keys())
     distance = calcul_circuit(list_of_points, cycle)
     assert round(distance, 3) == 38.483
@@ -199,7 +203,6 @@ def test_calcul_circuit():
 
 def test_return_sized():
     list_of_points = get_small_list_of_points()
-
     first_point = 0
     result = nearest_neighbor_algorithm(first_point, list_of_points)
     assert len(result) == 10
@@ -208,7 +211,6 @@ def test_return_sized():
 
 def test_small_nearest_neighbor():
     list_of_points = get_small_list_of_points()
-
     first_point = 0
     result = nearest_neighbor_algorithm(first_point, list_of_points)
     assert len(result) == 10
@@ -223,12 +225,10 @@ def test_big_nearest_neighbor():
 
 def test_small_better_algorithm():
     list_of_points = get_small_list_of_points()
-
     first_point = 0
     result = great_algorithm(first_point, list_of_points)
     assert len(result) == 10
     assert result[0] == first_point
-
     """I will add some tests here"""
 
 
@@ -239,7 +239,6 @@ def test_big_better_algorithm():
 
 def test_small_optimal_algorithm():
     list_of_points = get_small_list_of_points()
-
     first_point = 0
     result = optimal_algorithm(first_point, list_of_points)
     assert len(result) == 10
@@ -257,7 +256,6 @@ def test_big_optimal_algorithm():
 
 def test_tricky_nearest_neighbor():
     list_of_points = get_tricky_points()
-
     first_point = 0
     result = nearest_neighbor_algorithm(first_point, list_of_points)
     assert len(result) == 7
@@ -267,7 +265,6 @@ def test_tricky_nearest_neighbor():
 
 def test_tricky_better_algorithm():
     list_of_points = get_tricky_points()
-
     first_point = 0
     result = great_algorithm(first_point, list_of_points)
     assert len(result) == 7
@@ -277,10 +274,8 @@ def test_tricky_better_algorithm():
 
 def test_tricky_optimal_algorithm():
     list_of_points = get_tricky_points()
-
     first_point = 0
     result = optimal_algorithm(first_point, list_of_points)
     assert len(result) == 7
     assert result[0] == first_point
     assert round(calcul_circuit(list_of_points, result)) == 64
-great_algorithm(0,get_small_list_of_points())
