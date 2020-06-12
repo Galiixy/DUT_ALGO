@@ -1,5 +1,5 @@
 # Projet Robot
-##description
+## Description
 Projet DUT Informatique d'Algorithmie 
 ## Features
 ### Algo 1 - nearest
